@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const Result = require('./models/Result');
 const app = express();
 
 const PORT = process.env.PORT || 3001;
@@ -11,6 +12,23 @@ app.use(
     })
 );
 
+app.post(`/result`, async (req, res) => {
+    let name = req.body.name;
+    let score = req.body.score;
+    console.log(name, score);
+
+    const result = new Result({
+        name: name,
+        score: score
+    });
+
+    await result.save()
+});
+
+app.get('/results', async(req, res)=>{
+    const results = await Result.find({}).lean();
+    res.json({ results: results });
+})
 
 async function start() {
     try {
