@@ -1,0 +1,426 @@
+.container {
+    width: 100vw;
+    height: 100vh;
+    justify-content: end;
+    background-repeat: no-repeat;
+    background-size: 100vw 100vh;
+}
+
+.darken {
+    background-color: rgba(36, 36, 36, 0.8);
+    position: absolute;
+    transition: .4s;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+}
+
+.snowgif{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50%;
+    height: 50%;
+    opacity: 0.3;
+}
+
+.darkenLite {
+    background-color: rgba(0, 0, 0, 0.01);
+    position: absolute;
+    transition: .4s;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+}
+
+.yarik {
+    position: absolute;
+    top: 82%;
+    width: 110px;
+}
+
+.zoha {
+    position: absolute;
+    top: 84%;
+    height: 16%;
+}
+
+.allies {
+    position: absolute;
+    top: 4%;
+    right: 3%;
+    display: flex;
+    flex-direction: column;
+}
+
+.allyImage {
+    height: 5vh;
+    margin-right: 0.3vw;
+}
+
+.allyContainer {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1vh;
+    animation: zohaEncounter;
+    animation-duration: 0.5s;
+}
+
+@keyframes zohaEncounter {
+    from{
+        opacity: 0;
+        transform: translateY(20%);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0%);
+    }
+}
+
+.allyTitle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.allyName {
+    display: flex;
+    text-align: start;
+    margin-left: 0;
+    margin-right: auto;
+    font-size: 0.9vw;
+}
+
+.allyHp {
+    height: 1vh;
+    background-color: gray;
+    width: 5vw;
+    border-radius: 0.2vh;
+    display: flex;
+}
+
+.drop {
+    position: absolute;
+    width: 2%;
+}
+
+.enemy {
+    position: absolute;
+    width: 5%;
+    height: calc(18%);
+    animation: encounter;
+}
+
+.bossEnemy {
+    animation-duration: 2s !important;
+}
+
+.deadtitle {
+    /* background-color: rgb(36, 36, 36); */
+    position: absolute;
+    transition: .4s;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+}
+
+.background {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /* background-color: rgba(28, 31, 36, 0.93); */
+    font-size: 2vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+@keyframes bgshow {
+    from{
+        opacity: 0;
+    }
+    to{
+        opacity: 1;
+    }
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.titleContainer {
+    width: 100vw;
+    height: 100vh;
+    opacity: 1;
+}
+
+.counter {
+    color: greenyellow;
+}
+
+.show {
+    visibility: visible !important;
+    background-color: rgba(36, 36, 36, 0.76) !important;
+    transition: .4s;
+    z-index: 1000;
+    animation: bgshow;
+    animation-duration: .5s;
+}
+
+@keyframes encounter {
+    from {
+        transform: scale(0);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+.hide {
+    background-color: rgba(36, 36, 36, 0.76) !important;
+    transition: .4s;
+    z-index: 1000;
+    animation: bgfade;
+    animation-duration: .5s;
+}
+
+@keyframes bgfade {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.points {
+    position: absolute;
+    top: 2vw;
+    left: 2vw;
+    font-size: 1.4vw;
+    user-select: none;
+    z-index: 1001;
+}
+
+.gameOver {
+    animation: gameover;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+.button {
+    background-color: aliceblue;
+    padding: 0.8vw 1.5vw;
+    color: black;
+    font-size: 2vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    border-radius: 0.4vw;
+    cursor: pointer;
+    margin-top: 1vw;
+    transition: .3s ease;
+}
+
+.button:hover {
+    background-color: rgb(202, 211, 218);
+    transition: .3s ease;
+}
+
+.hintContainer {
+    display: flex;
+    top: 0;
+    left: 0;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    transition: .4s ease;
+    opacity: 1;
+}
+
+.hintContainer.fade {
+    transition: .4s ease;
+    opacity: 0;
+}
+
+.keysColumnContainer {
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.keysRowContainer {
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.input {
+    padding: 1vh 1vw;
+    border-radius: 0.4vw;
+    border: 0;
+    width: 20vw;
+    height: 2vh;
+}
+
+.input:focus{
+    outline: none;
+}
+
+.input::placeholder {
+    font-family: 'e-Ukraine-UL';
+    font-size: 0.7vw;
+}
+
+.keybutton {
+    display: flex;
+    padding: 2vw;
+    border: 0.2vw solid white;
+    border-radius: 0.8vw;
+    font-size: 2vw;
+    margin: 1vw 1vw 0;
+    height: 1vw;
+    justify-content: center;
+    align-items: center;
+    animation: keypress;
+    animation-duration: .8s;
+    animation-iteration-count: infinite;
+    user-select: none;
+}
+
+.keybutton.spase {
+    animation-delay: 0.25s;
+}
+
+.keybutton:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.spacebutton {
+    margin-top: 4vh;
+    padding: 1.6vw 14vw;
+    animation-duration: 1.2s;
+}
+
+
+@keyframes keypress {
+    0% {
+        transform: scale(0.8);
+    }
+
+    90% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(0.8);
+    }
+}
+
+@keyframes gameover {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.bossArived {
+    animation: dizzy;
+    animation-duration: 2s;
+}
+
+@keyframes dizzy {
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+
+    3% {
+        transform: scale(1.2) rotate(5deg);
+    }
+
+    6% {
+        transform: scale(1.16) rotate(-2deg);
+    }
+
+    15% {
+        transform: scale(1.1) rotate(0deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.barContainer {
+    margin: auto;
+    margin-top: 85vh;
+    animation: zohaEncounter;
+    animation-duration: 0.5s;
+}
+
+.bossTitle {
+    font-size: 1.5vw;
+    font-family: 'e-Ukraine-M';
+    margin-bottom: 2vh;
+}
+
+.hpContainer {
+    width: 40%;
+    background-color: rgb(5, 5, 5);
+    height: 2.3vh;
+    border-radius: 0.5vh;
+    display: flex;
+    padding: 0.2vw;
+    margin: auto;
+}
+
+.hp {
+    background-color: #911930;
+    border-radius: 0.5vh;
+}
+
+.hpAlly {
+    background-color: #911930;
+    border-radius: 0.2vh;
+}
+
+.hpAbsence {
+    background-color: #3a3a3a;
+}
+
+.zohadead{
+    animation: zohaDied;
+    animation-duration: 0.4s;
+}
+
+@keyframes zohaDied {
+    0%{
+        transform: rotate(0deg);
+    }
+    20%{
+        transform: rotate(25deg);
+    }
+    60%{
+        transform: rotate(-25deg);
+    }
+    80%{
+        transform: rotate(0deg);
+    }
+}
