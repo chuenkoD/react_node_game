@@ -100,6 +100,208 @@ class Game {
         }
     }
 
+    addNewEnemy() {
+        let leftBorder = - window.innerWidth / 2;
+        let rightBorder = window.innerWidth / 2 - window.innerWidth * 0.05;
+        let pos = leftBorder + rightBorder * 2 * Math.random();
+
+        this.Enemies.push(new Enemy({ x: pos }));
+    }
+
+    addNewBonus(pos, type) {
+        this.Bonuses.push(new Bonus(pos, type));
+    }
+
+    UpdateBonuses(player) {
+        for (const key in this.Bonuses) {
+            if (Object.hasOwnProperty.call(this.Bonuses, key)) {
+                const item = this.Bonuses[key];
+                item.pos.y += item.speed;
+                item.speed += window.innerHeight / 108000;
+
+                if (this.CheckPlayerKill(item, player)) {
+                    this.Bonuses.splice(this.Bonuses.findIndex(x => x === item), 1);
+                    if (item.type === 'Pill') {
+                        this.BusterTime = 3;
+                        this.PillsCount++;
+                    }
+                    else if (item.type === 'Shavuha') {
+                        this.TolikTime = 5;
+                    }
+                    else if (item.type === 'Needle') {
+                        this.NeedleTime = 2;
+                        needle.currentTime = 0;
+                        this.NeedlesCount++;
+                        needle.play();
+                    }
+                    else if (item.type === 'Zoha') {
+                        let leftBorder = - window.innerWidth / 2;
+                        let rightBorder = window.innerWidth / 2 - window.innerWidth * 0.05;
+                        let pos = leftBorder + rightBorder * 2 * Math.random();
+
+                        this.Allies.push(new Ally({ x: pos }));
+                        zohaevents[2].play();
+                        this.ZohaCount++;
+                    }
+                    else if (item.type === 'Unity') {
+                        this.UnityCount++;
+                        for (const item of this.Enemies) {
+                            this.Points += this.MultiplyPoints();
+                            item.alive = false;
+                            setTimeout(() => {
+                                this.Enemies.splice(this.Enemies.findIndex(x => x === item), 1);
+                            }, 500);
+                        }
+                        if (this.Boss !== null) {
+                            this.Boss.hp -= 150;
+                            if (this.Boss.hp < 0) {
+                                this.Boss.alive = false;
+                                this.Points += 10000;
+                                bossDefeated.play();
+                            }
+                        }
+                    }
+                }
+
+                if (item.type === 'Pill' || item.type === 'Unity') {
+                    for (const ally of this.Allies) {
+                        if (this.checkZohaCollision(item, ally.pos)) {
+                            this.Bonuses.splice(this.Bonuses.findIndex(x => x === item), 1);
+                            if (item.type === 'Pill') {
+                                zohaevents[3].play();
+                                ally.BusterTime = 3;
+                                this.PillsCount++;
+                            }
+                            else if (item.type === 'Unity') {
+                                this.UnityCount++;
+                                zohaevents[1].play();
+                                for (const item of this.Enemies) {
+                                    this.Points += this.MultiplyPoints();
+                                    item.alive = false;
+                                    setTimeout(() => {
+                                        this.Enemies.splice(this.Enemies.findIndex(x => x === item), 1);
+                                    }, 500);
+                                }
+                                if (this.Boss !== null) {
+                                    this.Boss.hp -= 150;
+                                    if (this.Boss.hp < 0) {
+                                        this.Boss.alive = false;
+                                        this.Points += 10000;
+                                        bossDefeated.play();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    checkZohaCollision(item, zoha) {
+        if (intersects.boxBox(zoha.x + window.innerHeight * 0.02, window.innerHeight * 0.86, window.innerWidth * 0.04, window.innerHeight * 0.02, item.pos.x, item.pos.y, window.innerWidth * 0.02, window.innerHeight * 0.02)) {
+            return true;
+        }
+        return false;
+    }
+
+    getWinConditions() {
+        return (this.Enemies.length === 0 && this.Points > 30000);
+    }
+
+    getBulletType() {
+        if (this.TolikTime === 0) {
+            return 'Shishka';
+        }
+        else return 'Shavuha';
+    }
+
+    addZohaDrop(pos) {
+        if (Math.random() < 0.02) {
+            zohashot.at(Math.floor(Math.random() * zohashot.length)).play();
+            this.Drops.push(new Drop(pos, `cgrt${Math.floor(Math.random() * 14)}`));
+            this.OdnorazkaCount++;
+        }
+    }
+
+    addNewDrop(pos) {
+        this.Drops.push(new Drop(pos, this.getBulletType()));
+        shot.volume = 1;
+
+        if (this.TolikTime === 0) {
+            this.BusterTime === 0 ? shot.play() : shot2.play()
+        } else shot3.play();
+
+        let type = this.getBulletType();
+        if (type === 'Shishka') this.BulletsCount++;
+        else if (type === 'Shavuha') this.ShavuhaCount++;
+        else this.OdnorazkaCount++;
+    }
+
+    addNewBall(pos) {
+        this.Balls.push(new Ball(pos, 0));
+    }
+
+    UpdateBalls(player) {
+        for (const key in this.Balls) {
+            if (Object.hasOwnProperty.call(this.Balls, key)) {
+                const item = this.Balls[key];
+                item.pos.y += item.speed;
+                if (item.dir !== null) {
+                    item.pos.x += item.dir;
+                }
+                item.speed += window.innerHeight / 54000;
+                if (this.CheckPlayerKill(item, player)) {
+                    this.Over = true;
+                    saveResult(this.Points);
+                    GameRadio.ToggleSomething();
+                }
+                for (const ally of this.Allies) {
+                    if (ally.alive && this.CheckPlayerKill(item, ally.pos)) {
+                        this.Balls.splice(this.Balls.findIndex(x => x === item), 1);
+                        zohadamage.at(Math.floor(Math.random()*zohadamage.length)).play();
+                        ally.hp -= 20;
+                        console.log(ally.hp);
+                        if (ally.hp <= 0) {
+                            zohaevents[0].play();
+                            ally.alive = false;
+                            setTimeout(() => {
+                                this.Allies.splice(this.Allies.findIndex(x => x === ally), 1);
+                            }, 500);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    CheckPlayerKill(ball, player) {
+        if (intersects.boxBox(player.x + window.innerHeight * 0.02, window.innerHeight * 0.82, window.innerWidth * 0.04, window.innerHeight * 0.02, ball.pos.x, ball.pos.y, window.innerWidth * 0.02, window.innerHeight * 0.02)) {
+            return true;
+        }
+        return false;
+    }
+
+    UpdateBoss() {
+        if (this.Boss !== null && this.Boss.alive) {
+            this.Boss.Move();
+
+            if (this.Boss.hp > 300 ? Math.random() < 0.012 : Math.random() < 0.024) {
+                this.Balls.push(this.Boss.Shot());
+            }
+        }
+    }
+
+    UpdateAlliesBoosters() {
+        for (const key in this.Allies) {
+            if (Object.hasOwnProperty.call(this.Allies, key)) {
+                const item = this.Allies[key];
+                item.Update();
+            }
+        }
+    }
+
+
     InitGame() {
         if (!this.Started) {
             this.addNewEnemy();
