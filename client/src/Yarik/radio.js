@@ -16,7 +16,6 @@ const end2 = require('./Resources/Sounds/end2.mp3');
 const end3 = require('./Resources/Sounds/end3.mp3');
 
 const win = require('./Resources/Radio/win.mp3');
-
 const switchs = require('./Resources/Sounds/switch.mp3');
 
 class Radio {
@@ -50,7 +49,6 @@ class Radio {
     ReduceVolume(){
         this.Tracks.at(this.Current).volume = 0.1;
     }
-
     PlayWinSound(play) {
         if (play) {
             this.WinSound.currentTime = 0;
