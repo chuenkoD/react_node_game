@@ -301,6 +301,107 @@ class Game {
         }
     }
 
+    UpdateAllies() {
+        for (const key in this.Allies) {
+            if (Object.hasOwnProperty.call(this.Allies, key)) {
+                const item = this.Allies[key];
+                if (item.alive) {
+                    item.Move();
+                    if (item.BusterTime === 0 ? Math.random() < 0.25 : Math.random() < 0.75) {
+                        this.addZohaDrop({ x: item.pos.x + window.innerWidth * 0.01, y: window.innerHeight * 0.86 });
+                    }
+                }
+            }
+        }
+    }
+
+    UpdateDrops() {
+        for (const key in this.Drops) {
+            if (Object.hasOwnProperty.call(this.Drops, key)) {
+                const item = this.Drops[key];
+                item.pos.y -= item.speed;
+                item.speed += window.innerHeight / 42000;
+                if (this.CheckKill(item)) {
+                    if (item.type === 'Shishka' || item.type.includes('cgrt')) {
+                        this.Drops.splice(this.Drops.findIndex(x => x === item), 1);
+                    }
+                    else if (item.type === 'Shavuha') {
+                        shotshavuha.at(Math.floor(Math.random() * shotshavuha.length)).play();
+                    }
+                    this.Points += this.MultiplyPoints();
+                    if (Math.random() < 0.006 * this.TimeAlive) {
+
+                        let randItem = Math.random();
+                        if (randItem > 0.8) {
+                            this.addNewBonus({ x: item.pos.x, y: window.innerHeight * 0.05 }, 'Pill');
+                        }
+                        else if (randItem > 0.6) {
+                            this.addNewBonus({ x: item.pos.x, y: window.innerHeight * 0.05 }, 'Shavuha');
+                        }
+                        else if (randItem > 0.4) {
+                            this.addNewBonus({ x: item.pos.x, y: window.innerHeight * 0.05 }, 'Needle');
+                        }
+                        else if (randItem > 0.2) {
+                            this.addNewBonus({ x: item.pos.x, y: window.innerHeight * 0.05 }, 'Unity');
+                        }
+                        else if (randItem > 0 && this.Allies.length < 3) {
+                            this.addNewBonus({ x: item.pos.x, y: window.innerHeight * 0.05 }, 'Zoha');
+                        }
+                    }
+                }
+                if (this.Boss !== null && this.CheckBossHit(item)) {
+                    if (item.type === 'Shishka' || item.type.includes('cgrt')) {
+                        this.Drops.splice(this.Drops.findIndex(x => x === item), 1);
+                        this.Boss.hp -= 20;
+                    }
+                    else if (item.type === 'Shavuha') {
+                        shotshavuha.at(Math.floor(Math.random() * shotshavuha.length)).play();
+                        this.Drops.splice(this.Drops.findIndex(x => x === item), 1);
+                        this.Boss.hp -= 60;
+                    }
+                    if (Math.random() < 0.0075 * this.TimeAlive) {
+                        let choice = Math.random();
+                        if (choice > 0.76) {
+                            this.addNewBonus({ x: item.pos.x, y: window.innerHeight * 0.05 }, 'Pill');
+                        }
+                        else if (choice > 0.54) {
+                            this.addNewBonus({ x: item.pos.x, y: window.innerHeight * 0.05 }, 'Shavuha');
+                        }
+                        else if (choice > 0.32) {
+                            this.addNewBonus({ x: item.pos.x, y: window.innerHeight * 0.05 }, 'Needle');
+                        }
+                        else if (choice > 0.10) {
+                            this.addNewBonus({ x: item.pos.x, y: window.innerHeight * 0.05 }, 'Unity');
+                        }
+                        else if (this.Allies.length < 3) {
+                            this.addNewBonus({ x: item.pos.x, y: window.innerHeight * 0.05 }, 'Zoha');
+                        }
+                    }
+                    if (this.Boss.hp < 0) {
+                        this.Boss.alive = false;
+                        this.Points += 10000;
+                        saveResult(this.Points);
+                        bossDefeated.play();
+                    }
+                }
+            }
+        }
+    }
+
+    MultiplyPoints() {
+        let NewPoints = this.AddPoints();
+        NewPoints += (3000 - this.spawnTime) / 100;
+        return Math.floor(NewPoints);
+    }
+
+    AddPoints() {
+        ++this.killedCount;
+        if (this.killedCount < 10) return 100;
+        else if (this.killedCount < 30) return 150;
+        else if (this.killedCount < 50) return 250;
+        else return 400;
+    }
+
 
     InitGame() {
         if (!this.Started) {
