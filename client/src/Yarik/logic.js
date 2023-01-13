@@ -468,6 +468,13 @@ class Game {
         }
     }
 
+    ChangeDelay() {
+        if (this.spawnTime > 250) {
+            this.spawnTime -= this.spawnTime / 10;
+        }
+        else this.spawnTime = 250;
+    }
+
     InitGame() {
         if (!this.Started) {
             this.addNewEnemy();
