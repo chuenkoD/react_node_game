@@ -402,6 +402,71 @@ class Game {
         else return 400;
     }
 
+    CheckKill(drop) {
+        for (const item of this.Enemies) {
+            if (item.alive) {
+                if (intersects.boxBox(drop.pos.x, drop.pos.y, window.innerWidth * 0.03, window.innerWidth * 0.03, item.pos.x + window.innerWidth * 0.02, 0, window.innerWidth * 0.03, window.innerHeight * 0.18)) {
+                    item.alive = false;
+                    audios[Math.floor(Math.random() * 5)].play();
+                    setTimeout(() => {
+                        this.Enemies.splice(this.Enemies.findIndex(x => x === item), 1);
+                    }, 500);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    CheckBossHit(drop) {
+        if (this.Boss.alive) {
+            if (intersects.boxBox(drop.pos.x, drop.pos.y, window.innerWidth * 0.03, window.innerWidth * 0.03, this.Boss.pos.x + window.innerWidth * 0.02, 0, window.innerWidth * 0.03, window.innerHeight * 0.18)) {
+                audios[Math.floor(Math.random() * 5)].play();
+                return true;
+            }
+        }
+        return false
+    }
+
+    UpdateEnemies() {
+        for (const key in this.Enemies) {
+            if (Object.hasOwnProperty.call(this.Enemies, key)) {
+                const item = this.Enemies[key];
+                item.Move();
+                if (Math.random() < 0.0015 * (this.killedCount < 10 ? this.killedCount : Math.sqrt(Math.sqrt(this.killedCount))) && item.alive) {
+                    this.addNewBall({ x: item.pos.x + window.innerWidth * 0.01, y: window.innerHeight * 0.1 });
+                }
+            }
+        }
+
+        if (this.Points >= 30000 && this.Enemies.length === 0 && this.Boss !== null && this.Boss.alive === false) {
+            this.Over = true;
+            GameRadio.ReduceVolume();
+            GameRadio.PlayWinSound(true);
+            this.Win = true;
+            return true;
+        }
+        return false;
+    }
+
+    BossInit() {
+        GameRadio.PlayBoss();
+        let leftBorder = - window.innerWidth / 2;
+        let rightBorder = window.innerWidth / 2 - window.innerWidth * 0.05;
+        let pos = leftBorder + rightBorder * 2 * Math.random();
+
+        this.Boss = new Boss({ x: pos });
+        bossArrival.at(Math.floor(Math.random() * bossArrival.length)).play();
+    }
+
+    RemoveLast() {
+        if (this.Drops.at(0) !== undefined && this.Drops.at(0).pos.y < -100) {
+            this.Drops.splice(0, 1);
+        }
+        if (this.Balls.at(0) !== undefined && this.Balls.at(0).pos.y > window.innerHeight + 100) {
+            this.Balls.splice(0, 1);
+        }
+    }
 
     InitGame() {
         if (!this.Started) {
